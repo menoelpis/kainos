@@ -9,6 +9,7 @@ gem 'jquery-rails'
 gem 'jbuilder',         '~> 2.0'
 gem 'devise',           '3.5.6'
 gem 'bower-rails'
+gem 'faker'
 gem 'sdoc',             '~> 0.4.0', group: :doc
 
 group :development, :test do
