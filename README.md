@@ -116,7 +116,7 @@ $ bundle exec rake db:migrate
 
 $ bundle exec rails dbconsole
 
-shine_development> INSERT INTO
+kainos_development> INSERT INTO
 				   	users (
 				   		email,
 				   		encrypted_password,
@@ -141,4 +141,13 @@ $ rm db/schema.rb
 $ bundle exec rake db:migrate
 $ RAILS_ENV=test bundle exec rake db:drop
 $ RAILS_ENV=test bundle exec rake db:create
+
+=========================================
+Create Member Model 
+=========================================
+
+$ bundle exec rails g model customer first_name:string \ 
+> last_name:string \ 
+> email:string \ 
+> username:string
 
