@@ -34,18 +34,18 @@
 		<%= render partial: "pager", locals: { keywords: @keywords, page: @page } %>
 
 		<ol class="list-group">
-			<% @members.each do |member| %>
-				<li class="list-group-item clearfix">
-					<h3 class="pull-right">
-						<small class="text-uppercase">Joined</small> 
-						<%= l member.created_at.to_date %></h3>
-					<h2 class="h3">
-						<%= member.first_name %> <%= member.last_name %>
-						<small><%= member.username %></small>
-					</h2>
-					<h4><%= member.email %></h4>
-				</li>
-			<% end %>
+			<li class="list-group-item clearfix"
+				ng-repeat="member in members">
+				<h3 class="pull-right">
+					<small class="text-uppercase">Joined</small>
+					{{ member.created_at }}
+				</h3>
+				<h2 class="h3">
+					{{ member.first_name }} {{ member.last_name }}
+					<small>{{ member.username }}</small>
+				</h2>
+				<h4>{{ member.email }}</h4>
+			</li>
 		</ol>
 		<%= render partial: "pager", locals: { keywords: @keywords, page: @page } %>
 	</section>
