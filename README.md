@@ -405,3 +405,49 @@ end
 
 [app/views/members/index.html.erb]
 + <%= render partial: "pager", locals: { keywords: @keywords, page: @page } %>
+
+========================================
+Angular Setup & Test
+========================================
+
+[Bowerfile]
+
++ asset 'angular', '~> 1.5'
++ resolution 'angular', '1.5'
+
+$ bundle exec rake bower:install
+
+[app/assets/javascripts/application.js]
+
++ //= require angular
+
+[config/routes.rb]
+
++ get "angular_test", to: "angular_test#index"
+
+[app/controllers/angular_test_controller.rb]
+
+class AngularTestController < ApplicationController
+	def index
+	end
+end
+
+[app/views/angular_test/index.html.erb]
+
+<article ng-app="angular_test"> 
+	<header> 
+		<h1 ng-if="name">Hello, {{name}}</h1>
+	</header> 
+	<section> 
+		<form class="form-inline"> 
+			<div class="form-group"> 
+				<label for="name">Name</label> 
+				<input class="form-control" name="name" type="text" placeholder="Enter your name" autofocus ng-model="name"> 
+			</div> 
+		</form> 
+	</section> 
+</article>
+
+[app/assets/javascripts/angular_test_app.js]
+
++ angular.module('angular_test', [ ]);
