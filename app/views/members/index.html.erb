@@ -20,11 +20,15 @@
 	</header>
 	<ol class="list-group">
 		<% @members.each do |member| %>
-			<li class="list-group-item">
-				<h2><%= member.first_name %> <%= member.last_name %></h2>
-				<h3>Joined <%= l member.created_at.to_date %></h3>
+			<li class="list-group-item clearfix">
+				<h3 class="pull-right">
+					<small class="text-uppercase">Joined</small> 
+					<%= l member.created_at.to_date %></h3>
+				<h2 class="h3">
+					<%= member.first_name %> <%= member.last_name %>
+					<small><%= member.username %></small>
+				</h2>
 				<h4><%= member.email %></h4>
-				<h5><%= member.username %></h5>
 			</li>
 		<% end %>
 	</ol>
