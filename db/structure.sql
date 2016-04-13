@@ -176,6 +176,27 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (re
 
 
 --
+-- Name: members_lower_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX members_lower_email ON members USING btree (lower((email)::text));
+
+
+--
+-- Name: members_lower_first_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX members_lower_first_name ON members USING btree (lower((first_name)::text) varchar_pattern_ops);
+
+
+--
+-- Name: members_lower_last_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX members_lower_last_name ON members USING btree (lower((last_name)::text) varchar_pattern_ops);
+
+
+--
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -193,4 +214,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160412225027');
 INSERT INTO schema_migrations (version) VALUES ('20160412232633');
 
 INSERT INTO schema_migrations (version) VALUES ('20160412233817');
+
+INSERT INTO schema_migrations (version) VALUES ('20160413013239');
 

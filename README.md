@@ -327,3 +327,42 @@ $ bundle exec rails dbconsole
 > ORDER BY 
 > email = 'bob@example.com' DESC, 
 > last_name ASC ; 
+
+=======================================================
+Adding Lowercase Indexes on Member Fields
+=======================================================
+
+$ bundle exec rails g migration add-lower-indexes-to-memberrs
+
+[db/migrate/12345_add_lower_indexes_to_members]
+
+ class AddLowerIndexesToMembers < ActiveRecord::Migration
+
+  def up
+  	execute %{
+  		CREATE INDEX 
+  			members_lower_last_name
+  		ON
+  			members (lower(last_name) varchar_pattern_ops)
+  	}
+  	execute %{
+  		CREATE INDEX 
+  			members_lower_first_name
+  		ON
+  		 	members (lower(first_name) varchar_pattern_ops)
+  	}
+  	execute %{
+  		CREATE INDEX 
+  			members_lower_email
+  		ON
+  			members (lower(email))
+  	}
+  end
+
+  def down
+  	remove_index :members, name: 'members_lower_last_name'
+  	remove_index :members, name: 'members_lower_first_name'
+  	remove_index :members, name: 'members_lower_email'
+  end
+
+end
