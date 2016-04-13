@@ -116,3 +116,87 @@ $ sudo mv $PHANTOM_JS /usr/local/share
 $ sudo ln -sf /usr/local/share/$PHANTOM_JS/bin/phantomjs /usr/local/bin
 
 $ phantomjs --version
+
+$ phantomjs 
+phantomjs> console.log("HELLO!"); 
+HELLO! 
+undefined 
+phantomjs>
+
+================================================
+Poltergeist & Database Cleaner Setup
+================================================
+
+[Gemfile]
+
+group :development, :test do
+  gem 'byebug'
+  gem 'rspec-rails',    '3.4.2'
++ gem 'poltergeist'
++ gem 'database_cleaner'
+end
+
+[spec/rails_helper.rb]
+
+# This file is copied to spec/ when you run 'rails generate rspec:install'
+ENV['RAILS_ENV'] ||= 'test'
+require File.expand_path('../../config/environment', __FILE__)
+# Prevent database truncation if the environment is production
+abort("The Rails environment is running in production mode!") if Rails.env.production?
+  require 'spec_helper'
+  require 'rspec/rails'
++ require 'capybara/poltergeist'
++ Capybara.javascript_driver = :poltergeist
++ Capybara.default_driver    = :poltergeist
+
+ActiveRecord::Migration.maintain_test_schema!
+
+RSpec.configure do |config|
+   config.fixture_path = "#{::Rails.root}/spec/fixtures"
+
+ + config.use_transactional_fixtures = false
+ + config.infer_spec_type_from_file_location!
+
+
+
+ + config.before(:each, :type => :feature) do
+ +   DatabaseCleaner.strategy = :truncation
+ + end
+ 
+end
+
+[spec/features/angular_test_app_spec.rb]
+
+require 'rails_helper'
+
+feature "angular test" do
+
+	let(:email)    { "bob@example.com" } 
+	let(:password) { "password123" }
+
+	before do 
+		User.create!(email: email, 
+					 password: password, 
+					 password_confirmation: password) 
+	end
+
+	scenario "Our Angular Test App is Working" do 
+		visit "/angular_test"
+		# Log In 
+		fill_in "Email", with: "bob@example.com" 
+		fill_in "Password", with: "password123" 
+		click_button "Log in"
+
+		# Check that we go to the right page 
+		expect(page).to have_content("Name")
+
+		# Test the page 
+		fill_in "name", with: "Bob" 
+		within "header h1" do 
+			expect(page).to have_content("Hello, Bob") 
+		end 
+	end
+
+end
+
+$ rspec spec/features/angular_test_app_spec.rb 
