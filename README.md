@@ -366,3 +366,42 @@ $ bundle exec rails g migration add-lower-indexes-to-memberrs
   end
 
 end
+
+=======================================================
+Pagination Implementation
+=======================================================
+
+[app/controllers/members_controller.rb]
+
+class MembersController < ApplicationController 
++	PAGE_SIZE = 10
+
+	def index 
++		@page = (params[:page] || 0).to_i
+		# ...
+	end 
+end
+
+@members = Member.where(
+				member_search_term.where_clause,
+				member_search_term.where_args).
+			order(member_search_term.order).
++			offset(PAGE_SIZE * @page).limit(PAGE_SIZE)
+
+[app/views/members/_pager.html.erb]
+
+<nav>
+	<ul class="pager">
+		<li class="previous <%= page == 0 ? 'disabled' : '' %>">
+			<%= link_to_if page > 0, "&larr; Previous".html_safe,
+				members_path(keywords: keywords, page: page - 1) %>
+		</li>
+		<li class="next">
+			<%= link_to "Next &rarr;".html_safe,
+				members_path(keywords: keywords, page: page + 1) %>
+		</li>
+	</ul>
+</nav>
+
+[app/views/members/index.html.erb]
++ <%= render partial: "pager", locals: { keywords: @keywords, page: @page } %>
