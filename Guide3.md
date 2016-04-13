@@ -55,3 +55,45 @@ describe "testing that rspec is configured" do
 end
 
 $ bundle exec rake
+
+[spec/models/user_spec.rb]
+
+require 'rails_helper'
+
+describe User do  
+	describe "email" do
+		let(:user) {
+			User.create!(email: "foo@example.com",
+						 password: "qwertyuiop",
+						 password_confirmation: "qwertyuiop")
+		}
+		it "absolutely prevents invalid email addresses" do 
+			expect {
+				user.update_attribute(:email, "foo@bar.com")
+			}.to raise_error(ActiveRecord::StatementInvalid,
+							 /email_must_be_company_email/i)
+		end
+	end
+end
+
+$ rspec spec/models/user_spec.rb
+
+[spec/support/violate_check_constraint_matcher.rb]
+
+RSpec::Matchers.define :violate_check_constraint do |constraint_name|
+	supports_block_expectations
+	match do |code_to_test|
+		begin
+			code_to_test.()
+			false
+		rescue ActiveRecord::StatementInvalid => ex 
+			ex.message =~ /#{constraint_name}/
+		end
+	end
+end
+
+[spec/models/user_spec.rb]
+
++ require 'support/violate_check_constraint_matcher'
+
+$ rspec spec/models/user_spec.rb
