@@ -146,8 +146,33 @@ $ RAILS_ENV=test bundle exec rake db:create
 Create Member Model 
 =========================================
 
-$ bundle exec rails g model customer first_name:string \ 
+$ bundle exec rails g model member first_name:string \ 
 > last_name:string \ 
 > email:string \ 
 > username:string
 
+[db/migrate/123445_create_members.rb]
++ null: false [on all rows]
++ add_index :customers, :email, unique: true
++ add_index :customers, :username, unique: true
+
+$ bundle exec rake db:migrate
+
+=========================================
+Member Creation with Faker Gem
+=========================================
+
+[Gemfile]
++ gem 'faker'
+
+$ bundle install
+
+[db/seed.rb]
+350_000.times do |i| 
+	Customer.create!( 
+		first_name: Faker::Name.first_name, 
+		last_name: Faker::Name.last_name, 
+		username: "#{Faker::Internet.user_name}#{i}", 
+		email: Faker::Internet.user_name + i.to_s + "@#{Faker::Internet.domain_name}") 
+end
+$ bundle exec rake db:seed
