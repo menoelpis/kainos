@@ -457,7 +457,7 @@ end
 Angular SearchedFor Pipeline Implementation
 ========================================================
 
-[app/views/customers/index.html.erb]
+[app/views/members/index.html.erb]
 
 <article ng-app="customers" ng-controller="CustomerSearchController"> 
 	#......
@@ -497,3 +497,122 @@ app.controller("MemberSearchController", [
 	}
 ]);
 
+========================================================
+Angular Implementation - Hardcoded
+========================================================
+
+[app/assets/javascripts/members_app.js]
+
+var app = angular.module('members', []);
+
+app.controller("MemberSearchController", [
+	"$scope",
+	function($scope) {
+		$scope.members = []; 
+		$scope.search = function(searchTerm) { 
+			$scope.members = [ 
+				{ 
+					"first_name":"Schuyler", 
+					"last_name":"Cremin", 
+					"email":"giles0@macgyver.net", 
+					"username":"jillian0", 
+					"created_at":"2015-03-04", 
+				}, 
+				{ 
+					"first_name":"Derick", 
+					"last_name":"Ebert", 
+					"email":"lupe1@rennerfisher.org", 
+					"username":"ubaldo_kaulke1", 
+					"created_at":"2015-03-04", 
+				}, 
+				{ 
+					"first_name":"Derick", 
+					"last_name":"Johnsons", 
+					"email":"dj@somewhere.org", 
+					"username":"djj", 
+					"created_at":"2015-03-04", 
+				}
+			]
+		}
+	}
+]);
+
+[app/views/members/index.html.erb]
+
+<ol class="list-group">
+	<li class="list-group-item clearfix" 
+		ng-repeat="member in members">
+		<h3 class="pull-right">
+			<small class="text-uppercase">Joined</small>
+			{{ member.created_at }}
+		</h3>
+		<h2 class="h3">
+			{{ member.first_name }} {{ member.last_name }}
+			<small>{{ member.username }}</small>
+		</h2>
+		<h4>{{ member.email }}</h4>
+	</li>
+</ol>
+
+========================================================
+Making an Ajax Request to Complete the Circle
+========================================================
+
+[app/controllers/members_controller.rb]
+
+class CustomersController < ApplicationController 
+	def index
+
+		# existing index method
+
+		respond_to do |format| 
+			format.html {} 
+			format.json { render json: @customers } 
+		end 
+	end 
+end
+
+[app/assets/javascripts/members_app.js]
+
+app.controller("MemberSearchController", [
++	"$scope", "$http",
++	function($scope, $http) {
+
++		var page = 0;
+
+		$scope.members = []; 
+		$scope.search = function(searchTerm) {
++			if (searchTerm.length < 3) {
++				return;
++			}
+
++			$http.get("/members.json",
++				{ "params" : { "keywords": searchTerm, "page": page } }
++			).then(function(response) {
++				$scope.members = response.data;
++			}, function(response) {
++				alert("There was a problem: " + response.status);
++				}
++			);
+		}
+
+		$scope.previousPage = function() {
+			if (page > 0) {
+				page = page - 1;
+				$scope.search($scope.keywords);
+			}
+		}
+
+		$scope.nextPage = function() {
+			page = page + 1;
+			$scope.search($scope.keywords);
+		}
+	}
+]);
+
+[app/views/members/index.html.erb]
+
+<h3 class="pull-right">
+	<small class="text-uppercase">Joined</small>
+	{{ member.created_at | date }}
+</h3>

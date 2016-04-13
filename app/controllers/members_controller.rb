@@ -14,6 +14,11 @@ class MembersController < ApplicationController
 		else
 			@members = []
 		end
+
+		respond_to do |format|
+			format.html {}
+			format.json { render json: @members }
+		end
 	end
 
 end
