@@ -404,6 +404,7 @@ end
 </nav>
 
 [app/views/members/index.html.erb]
+
 + <%= render partial: "pager", locals: { keywords: @keywords, page: @page } %>
 
 ========================================
@@ -451,3 +452,48 @@ end
 [app/assets/javascripts/angular_test_app.js]
 
 + angular.module('angular_test', [ ]);
+
+========================================================
+Angular SearchedFor Pipeline Implementation
+========================================================
+
+[app/views/customers/index.html.erb]
+
+<article ng-app="customers" ng-controller="CustomerSearchController"> 
+	#......
+	<section class="search-form">
+		<form>
+			<div class="input-group input-group-lg">
+				<label for="keywords" class="sr-only">Keywords</label>
+				<input type="text"
+				       name="keywords"
+				       class="form-control input-lg"
+				       placeholder="First Name, Last Name, or Email Address"
+				       ng-model="keywords">
+				<span class="input-group-btn">
+					<button class="btn btn-primary" ng-click="search(keywords)">
+						Find Members
+					</button>
+				</span>
+			</div>
+		</form>
+		<h1 class="searchedFor" ng-if="searchedFor">
+			<small>Searched for:</small> {{searchedFor}}
+		</h1>
+	</section> 
+	#.......
+</article>
+
+[app/assets/javascripts/members_app.js]
+
+var app = angular.module('members', []);
+
+app.controller("MemberSearchController", [
+	"$scope",
+	function($scope) {
+		$scope.search = function(searchTerm) {
+			$scope.searchedFor = searchTerm;
+		}
+	}
+]);
+
